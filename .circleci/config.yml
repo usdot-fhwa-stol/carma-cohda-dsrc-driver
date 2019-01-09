@@ -1,0 +1,37 @@
+version: 2
+jobs:
+  build:
+    # Setup docker
+    docker:
+      - image: usdotfhwastol/carma-base:2.8.1
+        user: carma
+        environment:
+          TERM: xterm # use xterm to get full display output from build
+    working_directory: "/opt/carma/"
+    # Execution steps
+    steps:
+      - run:
+          name: Create src folder
+          command: |
+            mkdir src
+            cd src
+            mkdir CARMACohdaDsrcDriver
+            mkdir CARMAMsgs
+      - checkout:
+          path: src/CARMACohdaDsrcDriver
+      - run: 
+          name: Pull CARMAMsgs
+          command: |
+            source /opt/ros/kinetic/setup.bash
+            git clone -b develop --depth 1 git@github.com:usdot-fhwa-stol/CARMAMsgs.git src/CARMAMsgs
+      - run:
+          name: Build Driver
+          command: |
+            source /opt/ros/kinetic/setup.bash
+            catkin_make install
+      - run:
+          name: Run C++ Tests
+          command: |
+            source /opt/ros/kinetic/setup.bash
+            source /opt/carma/devel/setup.bash
+            catkin_make run_tests
