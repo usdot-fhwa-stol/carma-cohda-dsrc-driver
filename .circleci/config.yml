@@ -24,6 +24,11 @@ jobs:
           command: |
             source /opt/ros/kinetic/setup.bash
             git clone -b develop --depth 1 git@github.com:usdot-fhwa-stol/CARMAMsgs.git src/CARMAMsgs
+      - run: 
+          name: Pull CARMADriverUtils
+          command: |
+            source /opt/ros/kinetic/setup.bash
+            git clone -b develop --depth 1 git@github.com:usdot-fhwa-stol/CARMADriverUtils.git src/CARMADriverUtils
       - run:
           name: Build Driver
           command: |
