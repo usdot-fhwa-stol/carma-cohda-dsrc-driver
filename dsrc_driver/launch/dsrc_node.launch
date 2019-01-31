@@ -3,8 +3,7 @@
     <arg name="dsrc_listening_port" default="1516" />
     <arg name="listening_port" default="5398" />
     <arg name="wave_cfg_file" default="$(find dsrc_driver)/etc/wave.json" />
-    <arg name="remap_ns" default="">
-
+    <arg name="remap_ns" default="/"/>
 
     <group ns="$(arg remap_ns)">
         <node name="dsrc" pkg="dsrc_driver" type="dsrc_driver_node" output="screen">

@@ -10,5 +10,3 @@ FROM usdotfhwastol/carma-base:2.8.3
 COPY --from=setup /home/carma/install /opt/carma/app/bin
 COPY --from=setup /home/carma/src/docker/entrypoint.sh /opt/carma
 RUN sudo chmod -R +x /opt/carma/app/bin
-
-ENTRYPOINT [ "/opt/carma/entrypoint.sh" ]
