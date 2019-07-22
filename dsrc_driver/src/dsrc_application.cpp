@@ -67,7 +67,7 @@ void DSRCApplication::initialize() {
     pnh.param<int>("dsrc_listening_port",config_.dsrc_listening_port, 1516);
     pnh.param<std::string>("dsrc_address",config_.dsrc_address, "169.254.1.1");    
     loadWaveConfig(wave_cfg_file);
-    comms_api_nh_.reset(new ros::NodeHandle("/comms"));
+    comms_api_nh_.reset(new ros::NodeHandle("comms"));
     dyn_cfg_server_.reset(new dynamic_reconfigure::Server<dsrc::DSRCConfig>(dyn_cfg_mutex_));
     dyn_cfg_server_->updateConfig(config_);
     dyn_cfg_server_->setCallback([this](dsrc::DSRCConfig & cfg, uint32_t level) { dynReconfigCB(cfg, level); });
