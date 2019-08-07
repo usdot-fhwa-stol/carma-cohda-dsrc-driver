@@ -90,9 +90,9 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 ##   * uncomment the "generate_dynamic_reconfigure_options" section below
 ##     and list every .cfg file to be processed
 
-## Generate dynamic reconfigure parameters in the 'cfg' folder
+## Generate dynamic reconfigure parameters in the 'config' folder
  generate_dynamic_reconfigure_options(
-	 cfg/DSRC.cfg
+	 config/DSRC.cfg
  )
 
 
@@ -190,7 +190,7 @@ install(DIRECTORY
 install(DIRECTORY
   etc
   launch
-  cfg
+  config
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
