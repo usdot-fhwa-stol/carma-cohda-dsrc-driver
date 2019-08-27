@@ -52,10 +52,10 @@ jobs:
             source ${INIT_ENV}
             git clone -b develop --depth 1 git@github.com:usdot-fhwa-stol/CARMAMsgs.git src/CARMAMsgs
       - run: 
-          name: Pull CARMADriverUtils
+          name: Pull CARMAUtils
           command: |
             source ${INIT_ENV}
-            git clone -b develop --depth 1 git@github.com:usdot-fhwa-stol/CARMADriverUtils.git src/CARMADriverUtils
+            git clone -b develop --depth 1 git@github.com:usdot-fhwa-stol/CARMAUtils.git src/CARMAUtils
       - run:
           name: Build Driver
           command: |
