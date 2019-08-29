@@ -28,7 +28,7 @@ jobs:
     # Pull docker image from docker hub
     # XTERM used for better catkin_make output
     docker:
-      - image: usdotfhwastol/carma-base-ci:2.8.4
+      - image: usdotfhwastol/carma-base:3.1.0
         user: carma
         environment:
           TERM: xterm # use xterm to get full display output from build
@@ -43,19 +43,13 @@ jobs:
             mkdir src
             cd src
             mkdir CARMACohdaDsrcDriver
-            mkdir CARMAMsgs
       - checkout:
           path: src/CARMACohdaDsrcDriver
       - run: 
-          name: Pull CARMAMsgs
+          name: Pull Deps
           command: |
             source ${INIT_ENV}
-            git clone -b develop --depth 1 git@github.com:usdot-fhwa-stol/CARMAMsgs.git src/CARMAMsgs
-      - run: 
-          name: Pull CARMAUtils
-          command: |
-            source ${INIT_ENV}
-            git clone -b develop --depth 1 git@github.com:usdot-fhwa-stol/CARMAUtils.git src/CARMAUtils
+            ./CARMACohdaDsrcDriver/docker/checkout.sh
       - run:
           name: Build Driver
           command: |
