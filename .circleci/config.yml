@@ -49,7 +49,7 @@ jobs:
           name: Pull Deps
           command: |
             source ${INIT_ENV}
-            ./CARMACohdaDsrcDriver/docker/checkout.sh ${PWD}
+            ./src/CARMACohdaDsrcDriver/docker/checkout.sh ${PWD}
       - run:
           name: Build Driver
           command: |
