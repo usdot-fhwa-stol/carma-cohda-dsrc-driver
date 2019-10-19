@@ -3,6 +3,8 @@ project(dsrc_driver)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -90,9 +92,9 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 ##   * uncomment the "generate_dynamic_reconfigure_options" section below
 ##     and list every .cfg file to be processed
 
-## Generate dynamic reconfigure parameters in the 'cfg' folder
+## Generate dynamic reconfigure parameters in the 'config' folder
  generate_dynamic_reconfigure_options(
-	 cfg/DSRC.cfg
+	 config/DSRC.cfg
  )
 
 
@@ -190,7 +192,7 @@ install(DIRECTORY
 install(DIRECTORY
   etc
   launch
-  cfg
+  config
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
