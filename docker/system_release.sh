@@ -47,6 +47,9 @@ if git ls-remote -q | grep $RELEASE_BRANCH; then
     echo "Checking out $RELEASE_BRANCH branch."
     git checkout $RELEASE_BRANCH
 
+    echo "Updated .circleci/config.yml base image dependency."
+    sed -i "s|carma-base:.*|carma-base:$SYSTEM_RELEASE|g" .circleci/config.yml
+
     echo "Updating checkout.bash to point to system release version."
     sed -i "s|CARMA[a-zA-Z]*_[0-9]*\.[0-9]*\.[0-9]*|$SYSTEM_RELEASE|g; s|carma-[a-zA-Z]*-[0-9]*\.[0-9]*\.[0-9]*|$SYSTEM_RELEASE|g" docker/checkout.bash
 
