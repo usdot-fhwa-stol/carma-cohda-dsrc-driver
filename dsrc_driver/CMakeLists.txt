@@ -108,8 +108,7 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  #INCLUDE_DIRS include
-  LIBRARIES dsrc_driver
+  
   CATKIN_DEPENDS cav_driver_utils roscpp
 #  DEPENDS system_lib
 )
@@ -123,7 +122,6 @@ catkin_package(
 include_directories(
  include
  thirdparty/rapidjson/include
- ${cav_driver_utils_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
 )
