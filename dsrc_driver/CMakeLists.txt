@@ -108,9 +108,8 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES pinpoint
-#  CATKIN_DEPENDS pinpoint_msgs roscpp
+  
+  CATKIN_DEPENDS cav_driver_utils roscpp
 #  DEPENDS system_lib
 )
 
