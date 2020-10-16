@@ -146,6 +146,8 @@ void DSRCOBUClient::process(const std::shared_ptr<const std::vector<uint8_t>>& d
             len_bytes = 1;
             // check for 0 length
             if (len_byte_1 == 0x00) { continue; }
+            // check for 1 length
+            if (len_byte_1 == 0x01) { continue; }
         }
             // length < 16384 encoded by 14 bits in 2 bytes (10xxxxxx xxxxxxxx)
         else if ((len_byte_1 & 0x40) == 0x00) { //we know msb = 1, check that next bit is 0
