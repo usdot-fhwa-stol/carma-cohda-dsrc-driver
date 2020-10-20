@@ -108,6 +108,21 @@ public:
      */
     bool sendDsrcMessage(const std::shared_ptr<std::vector<uint8_t>>&message);
 
+    /**
+     * @brief Validate msg_id
+     * */
+    bool IsValidMsgID(const std::string msg_id);
+
+    /**
+     * @brief load list of valid msg_id
+     * */
+    void loadWaveConfigDsrcIds(const std::string &fileName);
+     
+    /**
+     * @brief set wave config path
+    */
+   void set_wave_file_path(const std::string &path);
+
 
 private:
     std::unique_ptr<boost::asio::io_service> io_;
@@ -116,6 +131,8 @@ private:
 
     std::shared_ptr<std::thread> io_thread_;
     volatile bool running_;
+    std::vector<std::string> wave_cfg_dsrc_ids_;
+    std::string wave_file_path;
 
     //udp
     std::unique_ptr<boost::asio::ip::udp::socket> udp_out_socket_;

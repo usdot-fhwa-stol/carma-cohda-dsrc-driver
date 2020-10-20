@@ -36,6 +36,14 @@
 #include <functional>
 #include "dsrc_client.h"
 
+#include <dirent.h>
+#include <rapidjson/document.h>
+#include <rapidjson/istreamwrapper.h>
+#include <rapidjson/schema.h>
+#include <fstream>
+#include <string>
+#include <vector>
+
 DSRCOBUClient::DSRCOBUClient() :
     running_(false)
 {}
@@ -146,8 +154,6 @@ void DSRCOBUClient::process(const std::shared_ptr<const std::vector<uint8_t>>& d
             len_bytes = 1;
             // check for 0 length
             if (len_byte_1 == 0x00) { continue; }
-            // check for 1 length
-            if (len_byte_1 == 0x01) { continue; }
         }
             // length < 16384 encoded by 14 bits in 2 bytes (10xxxxxx xxxxxxxx)
         else if ((len_byte_1 & 0x40) == 0x00) { //we know msb = 1, check that next bit is 0
@@ -167,6 +173,7 @@ void DSRCOBUClient::process(const std::shared_ptr<const std::vector<uint8_t>>& d
         // If the length makes sense bsmPub(fits in the buffer), copy out the message bytes and pass to the Application class
         if ((i + 1 + len + len_bytes) < entry.size()) {
             // bool found_valid_msg = true;
+            if (!IsValidMsgID(std::to_string(msg_id))) { continue; }
             size_t start_index = i;
             size_t end_index = i + 2 + len + len_bytes; // includes 2 msgID bytes before message body
             //this constructor has range [first, last) hence the + 1
@@ -174,6 +181,107 @@ void DSRCOBUClient::process(const std::shared_ptr<const std::vector<uint8_t>>& d
             onMessageReceived(msg_vec, msg_id);
             break;
         }
+    }
+}
+
+bool DSRCOBUClient::IsValidMsgID(std::string msg_id)
+{
+    if(this->wave_cfg_dsrc_ids_.size() == 0)
+    {
+        if(this->wave_file_path.size() == 0)
+        {
+            std::cout<< "file path is not initialized in application\n";
+            return false;
+        }
+        loadWaveConfigDsrcIds(this->wave_file_path);
+    }    
+
+    for (std::vector<std::string>::iterator it =this->wave_cfg_dsrc_ids_.begin(); it != this->wave_cfg_dsrc_ids_.end(); ++it) 
+    {
+        if(msg_id == *it)
+            return true;
+    }
+    return false;
+}
+
+void DSRCOBUClient::set_wave_file_path(const std::string& path)
+{
+    this->wave_file_path = path;
+}
+
+void DSRCOBUClient::loadWaveConfigDsrcIds(const std::string &fileName)
+{    
+    const char* schema = "{\n"
+                        " \"$schema\":\"http://json-schema.org/draft-06/schema\",\n"
+                        " \"title\":\"Wave Config Schema\",\n"
+                        " \"description\":\"A simple schema to describe DSRC/Wave messages\",\n"
+                        "  \"type\": \"array\",\n"
+                        "  \"items\": {\n"
+                        "    \"type\": \"object\",\n"
+                        "    \"properties\": {\n"
+                        "      \"name\": {\n"
+                        "        \"description\": \"message type - abbreviated name\",\n"
+                        "        \"type\": \"string\"\n"
+                        "      },\n"
+                        "      \"psid\": {\n"
+                        "        \"description\": \"psid assigned to message type in decimal\",\n"
+                        "        \"type\": \"string\"\n"
+                        "      },\n"
+                        "      \"dsrc_id\": {\n"
+                        "        \"description\": \"J2735 DSRC id assigned to message type in decimal\",\n"
+                        "        \"type\": \"string\"\n"
+                        "      },\n"
+                        "      \"channel\": {\n"
+                        "        \"description\": \"DSRC radio channel assigned to message type in decimal\",\n"
+                        "        \"type\": \"string\"\n"
+                        "      },\n"
+                        "      \"priority\": {\n"
+                        "        \"description\": \"WSM Priotiy to use assigned to message type in decimal\",\n"
+                        "        \"type\":\"string\"\n"
+                        "      }\n"
+                        "    },\n"
+                        "    \"required\":[\"name\",\"psid\",\"dsrc_id\",\"channel\",\"priority\"]"
+                        "  }\n"
+                        "}\n";
+
+    std::ifstream file;
+    try
+    {
+        file.open(fileName);
+    }
+    catch (std::exception& e)
+    {
+        std::cout<<"Unable to open file : " << fileName << ", exception: " << e.what();
+        return ;
+    }
+
+    rapidjson::Document sd;
+    if(sd.Parse(schema).HasParseError())
+    {
+        std::cout<<"Invalid Wave Config Schema";
+        return ;
+    }
+
+    rapidjson::SchemaDocument schemaDocument(sd);
+    rapidjson::Document doc;
+    rapidjson::IStreamWrapper isw(file);
+    if(doc.ParseStream(isw).HasParseError())
+    {
+        std::cout<<"Error Parsing Wave Config";
+        return ;
+    }
+
+    rapidjson::SchemaValidator validator(schemaDocument);
+    if(!doc.Accept(validator))
+    {
+        std::cout<<"Wave Config improperly formatted";
+        return;
+    }
+
+    for(auto& it : doc.GetArray())
+    {
+        auto entry = it.GetObject();
+        wave_cfg_dsrc_ids_.emplace_back(entry["dsrc_id"].GetString());
     }
 }
 

@@ -142,7 +142,8 @@ add_executable(${PROJECT_NAME}_node
                 src/dsrc_client.cpp
                 src/dsrc_application.cpp)
 
-target_link_libraries(${PROJECT_NAME}_node ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+add_library(dsrc_driver_library src/dsrc_application.cpp src/dsrc_client.cpp)
+target_link_libraries(${PROJECT_NAME}_node ${Boost_LIBRARIES} ${catkin_LIBRARIES} dsrc_driver_library)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -153,6 +154,7 @@ target_link_libraries(${PROJECT_NAME}_node ${Boost_LIBRARIES} ${catkin_LIBRARIES
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(${PROJECT_NAME}_node ${PROJECT_NAME}_gencfg ${catkin_EXPORTED_TARGETS})
+add_dependencies(dsrc_driver_library ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(${PROJECT_NAME}_node
@@ -200,10 +202,14 @@ install(DIRECTORY
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_pinpoint_driver.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
+ catkin_add_gmock(${PROJECT_NAME}-test 
+    test/test_dsrc_client.cpp
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test)
+
+ if(TARGET ${PROJECT_NAME}-test)
+   target_link_libraries(${PROJECT_NAME}-test dsrc_driver_library  ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+ endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
