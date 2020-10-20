@@ -72,6 +72,8 @@ void DSRCApplication::initialize() {
     dyn_cfg_server_->updateConfig(config_);
     dyn_cfg_server_->setCallback([this](dsrc::DSRCConfig & cfg, uint32_t level) { dynReconfigCB(cfg, level); });
 
+    //set wave file path in dsrc_client
+    dsrc_client_.set_wave_file_path(wave_cfg_file);
     //Setup connection handlers
     dsrc_client_error_.clear();
     dsrc_client_.onConnect.connect([this]() { onConnectHandler(); });
