@@ -35,7 +35,6 @@
 #include <iostream>
 #include <functional>
 #include "dsrc_client.h"
-
 #include <dirent.h>
 #include <rapidjson/document.h>
 #include <rapidjson/istreamwrapper.h>
@@ -184,21 +183,20 @@ void DSRCOBUClient::process(const std::shared_ptr<const std::vector<uint8_t>>& d
     }
 }
 
-bool DSRCOBUClient::IsValidMsgID(std::string msg_id)
+bool DSRCOBUClient::IsValidMsgID(const std::string &msg_id)
 {
-    if(this->wave_cfg_dsrc_ids_.size() == 0)
+    if(this->wave_cfg_dsrc_ids_.empty())
     {
         if(this->wave_file_path.size() == 0)
         {
-            std::cout<< "file path is not initialized in application\n";
             return false;
         }
         loadWaveConfigDsrcIds(this->wave_file_path);
     }    
 
-    for (std::vector<std::string>::iterator it =this->wave_cfg_dsrc_ids_.begin(); it != this->wave_cfg_dsrc_ids_.end(); ++it) 
+    for (const auto &dsrc_id : this->wave_cfg_dsrc_ids_) 
     {
-        if(msg_id == *it)
+        if(msg_id == dsrc_id)
             return true;
     }
     return false;
@@ -249,7 +247,7 @@ void DSRCOBUClient::loadWaveConfigDsrcIds(const std::string &fileName)
     {
         file.open(fileName);
     }
-    catch (std::exception& e)
+    catch (const std::ifstream::failure& e)
     {
         std::cout<<"Unable to open file : " << fileName << ", exception: " << e.what();
         return ;

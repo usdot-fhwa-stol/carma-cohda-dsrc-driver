@@ -111,7 +111,7 @@ public:
     /**
      * @brief Validate msg_id
      * */
-    bool IsValidMsgID(const std::string msg_id);
+    bool IsValidMsgID(const std::string &msg_id);
 
     /**
      * @brief load list of valid msg_id
