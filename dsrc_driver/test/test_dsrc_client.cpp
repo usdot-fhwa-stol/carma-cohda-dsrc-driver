@@ -42,7 +42,11 @@ TEST(DSRCClientTest,testValidateMsgId)
     uint16_t msg_id = 20; 
     ASSERT_FALSE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
 
-    //read list of valid msg_id from wave.json file
+    //load wrong wave config file
+    dsrc_client_.set_wave_file_path("../etc/wave_invalid.json"); 
+    ASSERT_FALSE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
+
+    //read list of valid msg_id from correct wave.json file
     dsrc_client_.set_wave_file_path("../etc/wave.json"); 
     ASSERT_TRUE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
     msg_id = 31;           
