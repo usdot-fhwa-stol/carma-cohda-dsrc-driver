@@ -28,7 +28,7 @@ jobs:
     # Pull docker image from docker hub
     # XTERM used for better catkin_make output
     docker:
-      - image: usdotfhwastol/carma-base:3.6.0
+      - image: usdotfhwastol/carma-base:carma-system-3.4.0
         user: carma
         environment:
           TERM: xterm # use xterm to get full display output from build
@@ -49,7 +49,7 @@ jobs:
           name: Pull Deps
           command: |
             source ${INIT_ENV}
-            ./src/CARMACohdaDsrcDriver/docker/checkout.sh ${PWD}
+            ./src/CARMACohdaDsrcDriver/docker/checkout.bash -r ${PWD}
       - run:
           name: Build Driver
           command: |
