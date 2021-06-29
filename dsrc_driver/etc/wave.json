@@ -54,5 +54,19 @@
     "dsrc_id" : "242",
     "channel" : "172",
     "priority" : "6"
+  },
+  {
+    "name" : "TrafficControlRequest",
+    "psid" : "8003",
+    "dsrc_id" : "244",
+    "channel" : "172",
+    "priority" : "6"
+  },
+  {
+    "name" : "TrafficControlMessage",
+    "psid" : "8003",
+    "dsrc_id" : "245",
+    "channel" : "172",
+    "priority" : "6"
   }
 ]
