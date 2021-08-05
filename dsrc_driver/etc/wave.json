@@ -15,14 +15,14 @@
   },
   {
     "name" : "MAP",
-    "psid" : "0082",
+    "psid" : "8002",
     "dsrc_id" : "18",
     "channel" : "172",
     "priority" : "3"
   },
   {
     "name" : "SPAT",
-    "psid" : "0082",
+    "psid" : "8002",
     "dsrc_id" : "19",
     "channel" : "172",
     "priority" : "3"
