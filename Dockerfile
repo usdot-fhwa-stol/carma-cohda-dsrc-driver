@@ -12,14 +12,14 @@
 #  License for the specific language governing permissions and limitations under
 #  the License.
 
-FROM usdotfhwastolcandidate/carma-base:battista as setup
+FROM usdotfhwastol/carma-base:carma-system-3.9.0 as setup
 
 RUN mkdir ~/src
 COPY --chown=carma . /home/carma/src/
 RUN ~/src/docker/checkout.bash
 RUN ~/src/docker/install.sh
 
-FROM usdotfhwastolcandidate/carma-base:battista
+FROM usdotfhwastol/carma-base:carma-system-3.9.0
 
 ARG BUILD_DATE="NULL"
 ARG VERSION="NULL"
