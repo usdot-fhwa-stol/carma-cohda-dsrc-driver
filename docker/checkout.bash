@@ -35,7 +35,7 @@ while [[ $# -gt 0 ]]; do
       esac
 done
 
-if [[ "$BRANCH" = "noetic/develop" ]]; then
+if [[ "$BRANCH" = "develop" ]]; then
       git clone https://github.com/usdot-fhwa-stol/carma-msgs.git ${dir}/src/CARMAMsgs --branch $BRANCH
       git clone https://github.com/usdot-fhwa-stol/carma-utils.git ${dir}/src/CARMAUtils --branch $BRANCH
 else
