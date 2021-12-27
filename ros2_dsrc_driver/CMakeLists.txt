@@ -63,5 +63,5 @@ endif()
 
 # Install
 ament_auto_package(
-        INSTALL_TO_SHARE config launch
+        INSTALL_TO_SHARE config etc launch
 )
