@@ -26,6 +26,8 @@
 #include <gtest/gtest.h>
 #include <rclcpp/rclcpp.hpp>
 
+#include <ament_index_cpp/get_package_share_directory.hpp>
+
 TEST(DSRCClientTest, testSocket)
 {
     boost::asio::ip::tcp::endpoint remote_endpoint = boost::asio::ip::tcp::endpoint( boost::asio::ip::address_v4::from_string( "192.168.88.40" ), 5398 );
@@ -60,12 +62,15 @@ TEST(DSRCClientTest,testValidateMsgId)
     uint16_t msg_id = 20; 
     ASSERT_FALSE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
 
+
+    std::string package_share_directory = ament_index_cpp::get_package_share_directory("ros2_dsrc_driver");
+
     //load wrong wave config file
-    dsrc_client_.set_wave_file_path("etc/wave_invalid.json"); 
+    dsrc_client_.set_wave_file_path(package_share_directory + "/etc/wave_invalid.json"); 
     ASSERT_FALSE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
 
     //read list of valid msg_id from correct wave.json file
-    dsrc_client_.set_wave_file_path("etc/wave.json"); 
+    dsrc_client_.set_wave_file_path(package_share_directory + "/config/wave.json"); 
     ASSERT_TRUE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
     msg_id = 31;           
     ASSERT_TRUE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
