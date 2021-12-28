@@ -34,7 +34,7 @@ TEST(DSRCClientTest, testSocket)
 
 TEST(DSRCClientTest,testConnection)
 {
-    DSRCOBUClient dsrc_client_;
+    DSRCApplication::DSRCOBUClient dsrc_client_;
     boost::system::error_code ec;
     
     ASSERT_FALSE(dsrc_client_.connected());
@@ -55,17 +55,17 @@ TEST(DSRCClientTest,testConnection)
 
 TEST(DSRCClientTest,testValidateMsgId)
 {
-    DSRCOBUClient dsrc_client_;
+    DSRCApplication::DSRCOBUClient dsrc_client_;
     //No valid msg_id loaded yet
     uint16_t msg_id = 20; 
     ASSERT_FALSE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
 
     //load wrong wave config file
-    dsrc_client_.set_wave_file_path("../etc/wave_invalid.json"); 
+    dsrc_client_.set_wave_file_path("etc/wave_invalid.json"); 
     ASSERT_FALSE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
 
     //read list of valid msg_id from correct wave.json file
-    dsrc_client_.set_wave_file_path("../etc/wave.json"); 
+    dsrc_client_.set_wave_file_path("etc/wave.json"); 
     ASSERT_TRUE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
     msg_id = 31;           
     ASSERT_TRUE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
@@ -86,7 +86,7 @@ TEST(DSRCClientTest,testValidateMsgId)
 }
 TEST(DSRCClientTest,testSendDsrcMessage)
 {
-    DSRCOBUClient dsrc_client_;
+    DSRCApplication::DSRCOBUClient dsrc_client_;
     std::shared_ptr<std::vector<uint8_t>> messagePtr;
     std::vector<uint8_t> message =
      {0, 243, 124, 29, 89, 212, 226, 212, 58, 179, 169, 197, 168, 

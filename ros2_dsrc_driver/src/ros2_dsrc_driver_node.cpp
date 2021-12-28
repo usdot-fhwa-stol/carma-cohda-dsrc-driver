@@ -77,7 +77,10 @@ std::string Node::uint8_vector_to_hex_string(const std::vector<uint8_t>& v) {
 carma_ros2_utils::CallbackReturn Node::handle_on_configure(const rclcpp_lifecycle::State &) {
 
     pre_spin();
-    std::string wave_cfg_file = "etc/wave.json";
+
+    std::string package_share_directory = ament_index_cpp::get_package_share_directory("ros2_dsrc_driver");
+
+    std::string wave_cfg_file = package_share_directory + "/config/wave.json";
     loadWaveConfig(wave_cfg_file);
 
     config_.dsrc_address = declare_parameter<std::string>("dsrc_address", config_.dsrc_address);
@@ -302,38 +305,39 @@ void Node::pre_spin()
 void Node::loadWaveConfig(const std::string &fileName)
 {
     RCLCPP_DEBUG_STREAM(this->get_logger(),"Loading wave config");
+
     const char* schema = "{\n"
-                         " \"$schema\":\"http://json-schema.org/draft-06/schema\",\n"
-                         " \"title\":\"Wave Config Schema\",\n"
-                         " \"description\":\"A simple schema to describe DSRC/Wave messages\",\n"
-                         "  \"type\": \"array\",\n"
-                         "  \"items\": {\n"
-                         "    \"type\": \"object\",\n"
-                         "    \"properties\": {\n"
-                         "      \"name\": {\n"
-                         "        \"description\": \"message type - abbreviated name\",\n"
-                         "        \"type\": \"string\"\n"
-                         "      },\n"
-                         "      \"psid\": {\n"
-                         "        \"description\": \"psid assigned to message type in decimal\",\n"
-                         "        \"type\": \"string\"\n"
-                         "      },\n"
-                         "      \"dsrc_id\": {\n"
-                         "        \"description\": \"J2735 DSRC id assigned to message type in decimal\",\n"
-                         "        \"type\": \"string\"\n"
-                         "      },\n"
-                         "      \"channel\": {\n"
-                         "        \"description\": \"DSRC radio channel assigned to message type in decimal\",\n"
-                         "        \"type\": \"string\"\n"
-                         "      },\n"
-                         "      \"priority\": {\n"
-                         "        \"description\": \"WSM Priotiy to use assigned to message type in decimal\",\n"
-                         "        \"type\":\"string\"\n"
-                         "      }\n"
-                         "    },\n"
-                         "    \"required\":[\"name\",\"psid\",\"dsrc_id\",\"channel\",\"priority\"]"
-                         "  }\n"
-                         "}\n";
+                        " \"$schema\":\"http://json-schema.org/draft-06/schema\",\n"
+                        " \"title\":\"Wave Config Schema\",\n"
+                        " \"description\":\"A simple schema to describe DSRC/Wave messages\",\n"
+                        "  \"type\": \"array\",\n"
+                        "  \"items\": {\n"
+                        "    \"type\": \"object\",\n"
+                        "    \"properties\": {\n"
+                        "      \"name\": {\n"
+                        "        \"description\": \"message type - abbreviated name\",\n"
+                        "        \"type\": \"string\"\n"
+                        "      },\n"
+                        "      \"psid\": {\n"
+                        "        \"description\": \"psid assigned to message type in decimal\",\n"
+                        "        \"type\": \"string\"\n"
+                        "      },\n"
+                        "      \"dsrc_id\": {\n"
+                        "        \"description\": \"J2735 DSRC id assigned to message type in decimal\",\n"
+                        "        \"type\": \"string\"\n"
+                        "      },\n"
+                        "      \"channel\": {\n"
+                        "        \"description\": \"DSRC radio channel assigned to message type in decimal\",\n"
+                        "        \"type\": \"string\"\n"
+                        "      },\n"
+                        "      \"priority\": {\n"
+                        "        \"description\": \"WSM Priotiy to use assigned to message type in decimal\",\n"
+                        "        \"type\":\"string\"\n"
+                        "      }\n"
+                        "    },\n"
+                        "    \"required\":[\"name\",\"psid\",\"dsrc_id\",\"channel\",\"priority\"]"
+                        "  }\n"
+                        "}\n";
 
     std::ifstream file;
     try

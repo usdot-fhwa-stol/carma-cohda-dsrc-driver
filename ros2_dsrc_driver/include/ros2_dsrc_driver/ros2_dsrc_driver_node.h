@@ -62,6 +62,8 @@
 #include "ros2_dsrc_driver/dsrc_client.h"
 #include "ros2_dsrc_driver/dsrc_config.h"
 
+#include <ament_index_cpp/get_package_share_directory.hpp>
+
 
 namespace DSRCApplication
 {
