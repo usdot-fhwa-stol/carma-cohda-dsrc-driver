@@ -33,7 +33,6 @@ namespace DSRCApplication
     int listening_port = 5398;
 
     // Stream operator for this config
-    // TODO for USER: Update prints for the added parameters
     friend std::ostream &operator<<(std::ostream &output, const Config &c)
     {
       output << "ros2_dsrc_driver::Config { " << std::endl

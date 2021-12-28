@@ -9,10 +9,6 @@ carma_package()
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-find_package(j2735_v2x_msgs REQUIRED)
-
-# find_package(cav_driver_utils REQUIRED)
-
 # Name build targets
 set(node_exec ros2_dsrc_driver_node_exec)
 set(node_lib ros2_dsrc_driver_node)
