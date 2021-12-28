@@ -80,7 +80,7 @@ carma_ros2_utils::CallbackReturn Node::handle_on_configure(const rclcpp_lifecycl
 
     std::string package_share_directory = ament_index_cpp::get_package_share_directory("ros2_dsrc_driver");
 
-    std::string wave_cfg_file = package_share_directory + "/config/wave.json";
+    std::string wave_cfg_file = package_share_directory + "/etc/wave.json";
     loadWaveConfig(wave_cfg_file);
 
     config_.dsrc_address = declare_parameter<std::string>("dsrc_address", config_.dsrc_address);

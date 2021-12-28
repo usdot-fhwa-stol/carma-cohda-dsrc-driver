@@ -70,7 +70,7 @@ TEST(DSRCClientTest,testValidateMsgId)
     ASSERT_FALSE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
 
     //read list of valid msg_id from correct wave.json file
-    dsrc_client_.set_wave_file_path(package_share_directory + "/config/wave.json"); 
+    dsrc_client_.set_wave_file_path(package_share_directory + "/etc/wave.json"); 
     ASSERT_TRUE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
     msg_id = 31;           
     ASSERT_TRUE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
