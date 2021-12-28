@@ -101,8 +101,6 @@ public:
 
 private:
 
-    // std::vector<std::string> api_;
-
     // Node configuration
     Config config_;
 
