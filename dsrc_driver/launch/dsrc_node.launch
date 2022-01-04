@@ -5,6 +5,9 @@
     <arg name="wave_cfg_file" default="$(find dsrc_driver)/etc/wave.json" />
 
     <node name="dsrc" pkg="dsrc_driver" type="dsrc_driver_node" output="screen">
+        <remap from="comms/inbound_binary_msg" to="/comms/inbound_binary_msg"/>
+        <remap from="comms/outbound_binary_msg" to="/comms/outbound_binary_msg"/>
+
         <param name="dsrc_address" value="$(arg dsrc_address)" />
         <param name="dsrc_listening_port" value="$(arg dsrc_listening_port)" />
         <param name="listening_port" value="$(arg listening_port)" />
