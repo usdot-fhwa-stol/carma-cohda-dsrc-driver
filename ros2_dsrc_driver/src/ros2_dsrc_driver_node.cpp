@@ -206,6 +206,7 @@ void Node::onOutboundMessage(carma_driver_msgs::msg::ByteArray::UniquePtr messag
     }
     std::shared_ptr<std::vector<uint8_t>> message_content = std::make_shared<std::vector<uint8_t>>(std::move(packMessage(*message)));
     send_msg_queue_.push_back(std::move(message_content));
+    sendMessageFromQueue();
 }
 
 /**
