@@ -33,8 +33,6 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  */
 
-// #include <cav_driver_utils/driver_application/driver_application.h>
-
 #include <boost/asio.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/lambda/lambda.hpp>
