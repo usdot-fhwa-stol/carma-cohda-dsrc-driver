@@ -119,7 +119,13 @@ private:
     boost::system::error_code dsrc_client_error_;
     uint32_t queue_size_;
 
+    /**
+     * \brief function callback for dynamic parameter updates
+     */
+
     rcl_interfaces::msg::SetParametersResult parameter_update_callback(const std::vector<rclcpp::Parameter> &parameters);
+    
+    
     carma_ros2_utils::CallbackReturn handle_on_configure(const rclcpp_lifecycle::State &);
 
     /**
