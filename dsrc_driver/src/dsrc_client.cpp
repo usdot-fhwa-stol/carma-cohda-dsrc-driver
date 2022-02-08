@@ -34,7 +34,6 @@
 
 #include <iostream>
 #include <functional>
-#include "dsrc_client.h"
 #include <dirent.h>
 #include <rapidjson/document.h>
 #include <rapidjson/istreamwrapper.h>
@@ -42,6 +41,10 @@
 #include <fstream>
 #include <string>
 #include <vector>
+
+#include "dsrc_driver/dsrc_client.h"
+namespace DSRCApplication
+{
 
 DSRCOBUClient::DSRCOBUClient() :
     running_(false)
@@ -306,4 +309,5 @@ bool DSRCOBUClient::sendDsrcMessage(const std::shared_ptr<std::vector<uint8_t>>&
     catch (std::exception& e) {
         return false;
     }
+}
 }

@@ -32,7 +32,7 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ros2_dsrc_driver/ros2_dsrc_driver_node.h"
+#include "dsrc_driver/dsrc_driver_node.h"
 #include <rapidjson/document.h>
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/schema.h>
@@ -78,7 +78,7 @@ carma_ros2_utils::CallbackReturn Node::handle_on_configure(const rclcpp_lifecycl
 
     pre_spin();
 
-    std::string package_share_directory = ament_index_cpp::get_package_share_directory("ros2_dsrc_driver");
+    std::string package_share_directory = ament_index_cpp::get_package_share_directory("dsrc_driver");
 
     std::string wave_cfg_file = package_share_directory + "/etc/wave.json";
     loadWaveConfig(wave_cfg_file);

@@ -23,7 +23,7 @@ import os
 
 
 '''
-This file is can be used to launch the CARMA ros2_dsrc_driver_node.
+This file is can be used to launch the CARMA dsrc_driver_node.
   Though in carma-platform it may be launched directly from the base launch file.
 '''
 
@@ -36,22 +36,22 @@ def generate_launch_description():
     
     # Get parameter file path
     param_file_path = os.path.join(
-        get_package_share_directory('ros2_dsrc_driver'), 'config/parameters.yaml')
+        get_package_share_directory('dsrc_driver'), 'config/parameters.yaml')
 
         
     # Launch node(s) in a carma container to allow logging to be configured
     container = ComposableNodeContainer(
         package='carma_ros2_utils',
-        name='ros2_dsrc_driver_container',
+        name='dsrc_driver_container',
         namespace='/',
         executable='carma_component_container_mt',
         composable_node_descriptions=[
             
             # Launch the core node(s)
             ComposableNode(
-                    package='ros2_dsrc_driver',
-                    plugin='ros2_dsrc_driver::Node',
-                    name='ros2_dsrc_driver_node',
+                    package='dsrc_driver',
+                    plugin='dsrc_driver::Node',
+                    name='dsrc_driver_node',
                     namespace="/",
                     extra_arguments=[
                         {'use_intra_process_comms': True},

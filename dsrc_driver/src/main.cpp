@@ -31,12 +31,21 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
+#include <rclcpp/rclcpp.hpp>
 
-#include "dsrc_application.h"
+#include "dsrc_driver/dsrc_driver_node.h"
 
-int main(int argc, char**argv)
+int main(int argc, char ** argv)
 {
-    DSRCApplication app(argc,argv);
+  rclcpp::init(argc, argv);
 
-    return app.run();
+  auto node = std::make_shared<DSRCApplication::Node>(rclcpp::NodeOptions());
+  
+  rclcpp::executors::MultiThreadedExecutor executor;
+  executor.add_node(node->get_node_base_interface());
+  executor.spin();
+
+  rclcpp::shutdown();
+
+  return 0;
 }

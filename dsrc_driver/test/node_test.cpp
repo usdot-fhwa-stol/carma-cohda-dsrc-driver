@@ -63,7 +63,7 @@ TEST(DSRCClientTest,testValidateMsgId)
     ASSERT_FALSE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
 
 
-    std::string package_share_directory = ament_index_cpp::get_package_share_directory("ros2_dsrc_driver");
+    std::string package_share_directory = ament_index_cpp::get_package_share_directory("dsrc_driver");
 
     //load wrong wave config file
     dsrc_client_.set_wave_file_path(package_share_directory + "/etc/wave_invalid.json"); 

@@ -23,7 +23,7 @@ namespace DSRCApplication
 {
 
   /**
-   * \brief Stuct containing the algorithm configuration values for ros2_dsrc_driver
+   * \brief Stuct containing the algorithm configuration values for dsrc_driver
    */
   struct Config
   {
@@ -35,7 +35,7 @@ namespace DSRCApplication
     // Stream operator for this config
     friend std::ostream &operator<<(std::ostream &output, const Config &c)
     {
-      output << "ros2_dsrc_driver::Config { " << std::endl
+      output << "dsrc_driver::Config { " << std::endl
            << "listening_port: " << c.listening_port << std::endl
            << "dsrc_listening_port: " << c.dsrc_listening_port << std::endl
            << "dsrc_address: " << c.dsrc_address << std::endl
