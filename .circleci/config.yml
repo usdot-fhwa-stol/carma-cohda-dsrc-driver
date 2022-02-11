@@ -35,6 +35,7 @@ jobs:
           INIT_ENV: /home/carma/.base-image/init-env.sh
           ROS_2_ENV: /opt/ros/foxy/setup.bash
     working_directory: "/opt/carma/"
+    resource_class: large
     # Execution steps
     steps:
       - run:
