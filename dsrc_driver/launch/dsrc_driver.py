@@ -36,7 +36,7 @@ def generate_launch_description():
     
     # Get parameter file path
     param_file_path = os.path.join(
-        get_package_share_directory('dsrc_driver'), 'config/parameters.yaml')
+        get_package_share_directory('dsrc_driver'), 'config/params.yaml')
 
         
     # Launch node(s) in a carma container to allow logging to be configured
@@ -50,7 +50,7 @@ def generate_launch_description():
             # Launch the core node(s)
             ComposableNode(
                     package='dsrc_driver',
-                    plugin='dsrc_driver::Node',
+                    plugin='DSRCApplication::Node',
                     name='dsrc_driver_node',
                     namespace="/",
                     extra_arguments=[
