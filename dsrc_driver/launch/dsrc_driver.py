@@ -1,4 +1,4 @@
-# Copyright (C) <SUB><year> LEIDOS.
+# Copyright (C) 2022 LEIDOS.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -18,6 +18,7 @@ from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
+from carma_ros2_utils.launch.get_current_namespace import GetCurrentNamespace
 
 import os
 
@@ -36,26 +37,29 @@ def generate_launch_description():
     
     # Get parameter file path
     param_file_path = os.path.join(
-        get_package_share_directory('dsrc_driver'), 'config/parameters.yaml')
+        get_package_share_directory('dsrc_driver'), 'config/params.yaml')
 
         
     # Launch node(s) in a carma container to allow logging to be configured
     container = ComposableNodeContainer(
         package='carma_ros2_utils',
         name='dsrc_driver_container',
-        namespace='/',
+        namespace=GetCurrentNamespace(),
         executable='carma_component_container_mt',
         composable_node_descriptions=[
             
             # Launch the core node(s)
             ComposableNode(
                     package='dsrc_driver',
-                    plugin='dsrc_driver::Node',
+                    plugin='DSRCApplication::Node',
                     name='dsrc_driver_node',
-                    namespace="/",
                     extra_arguments=[
                         {'use_intra_process_comms': True},
                         {'--log-level' : log_level }
+                    ],
+                    remappings=[
+                        ("inbound_binary_msg", "comms/inbound_binary_msg"),
+                        ("outbound_binary_msg", "comms/outbound_binary_msg"),
                     ],
                     parameters=[ param_file_path ]
             ),
