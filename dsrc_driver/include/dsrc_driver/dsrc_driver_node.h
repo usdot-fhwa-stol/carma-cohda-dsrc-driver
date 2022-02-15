@@ -117,7 +117,7 @@ private:
 
     DSRCOBUClient dsrc_client_;
     boost::system::error_code dsrc_client_error_;
-    uint32_t queue_size_;
+    uint32_t queue_size_ = 100;
 
     /**
      * \brief function callback for dynamic parameter updates
