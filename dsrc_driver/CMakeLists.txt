@@ -16,11 +16,9 @@ set(node_lib dsrc_driver_node)
 # Includes
 include_directories(
   include
-  thirdparty/rapidjson/include
 )
 
 ament_export_include_directories(include)
-ament_export_include_directories(thirdparty/rapidjson/include)
 
 
 # Build
