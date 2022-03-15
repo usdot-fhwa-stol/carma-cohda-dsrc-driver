@@ -1,3 +1,3 @@
-"DSRC Address": "192.168.88.40"
-"DSRC Port": 1516
-"Local Port": 5398
+dsrc_address: "192.168.88.40"
+dsrc_listening_port: 1516
+listening_port: 5398
