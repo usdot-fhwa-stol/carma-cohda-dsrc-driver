@@ -46,18 +46,25 @@ namespace std_ph = std::placeholders;
 Node::Node(const rclcpp::NodeOptions &options)
     : carma_ros2_utils::CarmaLifecycleNode(options)
 {
+    // Create initial config
+    config_ = Config();
+
+    // Declare parameters
+    config_.listening_port = declare_parameter<int>("listening_port", config_.listening_port);
+    config_.dsrc_listening_port = declare_parameter<int>("dsrc_listening_port", config_.dsrc_listening_port);
+    config_.dsrc_address = declare_parameter<std::string>("dsrc_address", config_.dsrc_address);
 }
 
 rcl_interfaces::msg::SetParametersResult Node::parameter_update_callback(const std::vector<rclcpp::Parameter> &parameters)
 {
 
     auto error = update_params<int>({{"listening_port", config_.listening_port}}, parameters);
-    error = update_params<int>({{"dsrc_listening_port", config_.dsrc_listening_port}}, parameters);
-    error = update_params<std::string>({{"dsrc_address", config_.dsrc_address}}, parameters);
+    auto error_2 = update_params<int>({{"dsrc_listening_port", config_.dsrc_listening_port}}, parameters);
+    auto error_3 = update_params<std::string>({{"dsrc_address", config_.dsrc_address}}, parameters);
 
     rcl_interfaces::msg::SetParametersResult result;
 
-    result.successful = !error;
+    result.successful = !error && !error_2 && !error_3;
 
     return result;
 }
@@ -76,16 +83,24 @@ std::string Node::uint8_vector_to_hex_string(const std::vector<uint8_t>& v) {
 
 carma_ros2_utils::CallbackReturn Node::handle_on_configure(const rclcpp_lifecycle::State &) {
 
+    RCLCPP_INFO_STREAM(this->get_logger(), "dsrc_driver trying to configure");
+
+    // Reset config
+    config_ = Config();
+
+    // Load parameters
+    get_parameter<int>("listening_port", config_.listening_port);
+    get_parameter<int>("dsrc_listening_port", config_.dsrc_listening_port);
+    get_parameter<std::string>("dsrc_address", config_.dsrc_address);
+
+    RCLCPP_INFO_STREAM(this->get_logger(), "Loaded params: " << config_);
+
     pre_spin();
 
     std::string package_share_directory = ament_index_cpp::get_package_share_directory("dsrc_driver");
 
     std::string wave_cfg_file = package_share_directory + "/etc/wave.json";
     loadWaveConfig(wave_cfg_file);
-
-    config_.dsrc_address = declare_parameter<std::string>("dsrc_address", config_.dsrc_address);
-    config_.dsrc_listening_port = declare_parameter<int>("dsrc_listening_port", config_.dsrc_listening_port);
-    config_.listening_port = declare_parameter<int>("listening_port", config_.listening_port);
 
     // Register runtime parameter update callback
     add_on_set_parameters_callback(std::bind(&Node::parameter_update_callback, this, std_ph::_1));
