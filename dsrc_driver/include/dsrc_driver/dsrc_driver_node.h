@@ -33,13 +33,12 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "dsrc_client.h"
-
-#include <cav_driver_utils/driver_application/driver_application.h>
-
 #include <boost/asio.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/lambda/lambda.hpp>
+
+#include <iostream>
+#include <iomanip>
 
 #include <memory>
 #include <mutex>
@@ -48,23 +47,32 @@
 #include <queue>
 #include <vector>
 
-#include <cav_msgs/ByteArray.h>
-#include <cav_srvs/SendMessage.h>
+#include "j2735_v2x_msgs/msg/byte_array.hpp"
+#include "carma_msgs/msg/system_alert.hpp"
+#include "carma_driver_msgs/srv/send_message.hpp"
 
-#include <dynamic_reconfigure/server.h>
-#include <dsrc_driver/DSRCConfig.h>
-
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
+#include <carma_ros2_utils/carma_lifecycle_node.hpp>
 
 #include <map>
 #include <set>
+
+#include "dsrc_driver/dsrc_client.h"
+#include "dsrc_driver/dsrc_config.h"
+
+#include <ament_index_cpp/get_package_share_directory.hpp>
+
+
+namespace DSRCApplication
+{
 
 /**
  * @class DSRCApplication
  * @brief Is the class responsible for the ROS dsrc driver
  */
-class DSRCApplication : public cav::DriverApplication
+class Node : public carma_ros2_utils::CarmaLifecycleNode
 {
+
 private:
     struct WaveConfigStruct
     {
@@ -84,31 +92,22 @@ private:
 
 public:
 
-
     /**
-     * @brief constructor
-     * @param argc - command line argument count
-     * @param argv - command line arguments
+     * \brief Node constructor 
      */
-    DSRCApplication(int argc, char** argv);
-
-    ~DSRCApplication() { shutdown(); }
+    explicit Node(const rclcpp::NodeOptions &);
 
 private:
 
-    std::vector<std::string> api_;
+    // Node configuration
+    Config config_;
 
     //ROS
-    ros::Publisher comms_pub_;
-    ros::Subscriber comms_sub_;
-    ros::ServiceServer comms_srv_;
-    std::shared_ptr<ros::NodeHandle> comms_api_nh_;
+    // Service Servers
+    carma_ros2_utils::SubPtr<carma_driver_msgs::msg::ByteArray> comms_sub_;
+    carma_ros2_utils::PubPtr<carma_driver_msgs::msg::ByteArray> comms_pub_;
+    carma_ros2_utils::ServicePtr<carma_driver_msgs::srv::SendMessage> comms_srv_;
 
-    //dynamic reconfig
-    dsrc::DSRCConfig config_;
-    std::mutex cfg_mutex_;
-    std::shared_ptr<dynamic_reconfigure::Server<dsrc::DSRCConfig>> dyn_cfg_server_;
-    boost::recursive_mutex dyn_cfg_mutex_;
 
     std::deque<std::shared_ptr<std::vector<uint8_t>>> send_msg_queue_;
     bool connecting_ = false;
@@ -118,54 +117,24 @@ private:
 
     DSRCOBUClient dsrc_client_;
     boost::system::error_code dsrc_client_error_;
-    uint32_t queue_size_;
+    uint32_t queue_size_ = 100;
 
     /**
-     * @brief Initializes ROS context for this node
-     *
-     * Establishes the connection to the DSRC hardware. Sets up pertinent events and corresponding topics
+     * \brief function callback for dynamic parameter updates
      */
-    virtual void initialize() override;
-
-    /**
-     * @brief Called by the base DriverApplication class after spin
-     *
-     * Sends messages from the outgoing queue
-     */
-    virtual void post_spin() override;
+    rcl_interfaces::msg::SetParametersResult parameter_update_callback(const std::vector<rclcpp::Parameter> &parameters);
+    
+    
+    carma_ros2_utils::CallbackReturn handle_on_configure(const rclcpp_lifecycle::State &);
 
     /**
      * @brief Called by the base DriverApplication class prior to Spin
      *
      * Manages local state of hardware device, reconnecting as needed
      */
-    virtual void pre_spin() override;
+    virtual void pre_spin();
 
-    virtual void shutdown() override;
-
-    /**
-     * @brief Called by the base DriverApplication class to fetch this implementation's api
-     *
-     * The API is a list of fully scoped names to topics and services specified by the
-     * CAV Platform architecture
-     *
-     * @return list of api
-     */
-    inline virtual std::vector<std::string>& get_api() override  { return api_; }
-
-    /**
-    * @brief Handles the DSRC onConnect Event
-    *
-    * Establishes status of the node
-    */
-    void onConnectHandler();
-
-    /**
-    * @brief Handles the DSRC onDisconnect Event
-    *
-    * On Disconnect this node will enter a reconnect loop attempting to reconnect
-    */
-    void onDisconnectHandler();
+    virtual void handle_on_shutdown();
 
     /**
     * @brief Handles messages received from the DSRCDSRCOBUClient
@@ -182,7 +151,7 @@ private:
     * This processes an incoming ByteArray message, and packs it according to the
     * Active Message file for the OSU.
     */
-    std::vector<uint8_t> packMessage(const cav_msgs::ByteArray& message);
+    std::vector<uint8_t> packMessage(carma_driver_msgs::msg::ByteArray message);
 
     /**
      * @brief Handles outbound messages from the ROS network
@@ -191,7 +160,7 @@ private:
      * This method packs the message according to the J2375 2016 standard,
      * and sends it to the client program
      */
-    void onOutboundMessage(const cav_msgs::ByteArray::ConstPtr& message);
+    void onOutboundMessage(carma_driver_msgs::msg::ByteArray::UniquePtr message);
 
     /**
      * @brief Message sending service
@@ -199,19 +168,15 @@ private:
      * @param res
      *
      */
-    bool sendMessageSrv(cav_srvs::SendMessage::Request& req, cav_srvs::SendMessage::Response& res);
+    void sendMessageSrv(const std::shared_ptr<rmw_request_id_t> header,
+                                  const std::shared_ptr<carma_driver_msgs::srv::SendMessage::Request> req,
+                                  std::shared_ptr<carma_driver_msgs::srv::SendMessage::Response> res);
+
 
     /**
      * @brief Sends a message from the queue of outbound messages
      */
     void sendMessageFromQueue();
-
-    /**
-     * @brief Callback for dynamic reconfig service
-     * @param cfg
-     * @param level
-     */
-    void dynReconfigCB(dsrc::DSRCConfig & cfg, uint32_t level);
 
 
     /**
@@ -226,5 +191,6 @@ private:
      * @return
      */
     std::string uint8_vector_to_hex_string(const std::vector<uint8_t>& v);
-    
+
 };
+}

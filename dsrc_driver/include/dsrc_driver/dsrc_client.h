@@ -44,7 +44,9 @@
 #include <vector>
 
 
-#include "udp_listener.h"
+#include "dsrc_driver/udp_listener.h"
+namespace DSRCApplication
+{
 
 class DSRCOBUClient
 {
@@ -150,3 +152,5 @@ private:
     */
     void process(const std::shared_ptr<const std::vector<uint8_t>> &data);
 };
+
+}

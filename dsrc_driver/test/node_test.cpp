@@ -24,7 +24,9 @@
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/schema.h>
 #include <gtest/gtest.h>
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
+
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 TEST(DSRCClientTest, testSocket)
 {
@@ -34,7 +36,7 @@ TEST(DSRCClientTest, testSocket)
 
 TEST(DSRCClientTest,testConnection)
 {
-    DSRCOBUClient dsrc_client_;
+    DSRCApplication::DSRCOBUClient dsrc_client_;
     boost::system::error_code ec;
     
     ASSERT_FALSE(dsrc_client_.connected());
@@ -55,17 +57,20 @@ TEST(DSRCClientTest,testConnection)
 
 TEST(DSRCClientTest,testValidateMsgId)
 {
-    DSRCOBUClient dsrc_client_;
+    DSRCApplication::DSRCOBUClient dsrc_client_;
     //No valid msg_id loaded yet
     uint16_t msg_id = 20; 
     ASSERT_FALSE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
 
+
+    std::string package_share_directory = ament_index_cpp::get_package_share_directory("dsrc_driver");
+
     //load wrong wave config file
-    dsrc_client_.set_wave_file_path("../etc/wave_invalid.json"); 
+    dsrc_client_.set_wave_file_path(package_share_directory + "/etc/wave_invalid.json"); 
     ASSERT_FALSE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
 
     //read list of valid msg_id from correct wave.json file
-    dsrc_client_.set_wave_file_path("../etc/wave.json"); 
+    dsrc_client_.set_wave_file_path(package_share_directory + "/etc/wave.json"); 
     ASSERT_TRUE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
     msg_id = 31;           
     ASSERT_TRUE(dsrc_client_.IsValidMsgID(std::to_string(msg_id)));
@@ -86,7 +91,7 @@ TEST(DSRCClientTest,testValidateMsgId)
 }
 TEST(DSRCClientTest,testSendDsrcMessage)
 {
-    DSRCOBUClient dsrc_client_;
+    DSRCApplication::DSRCOBUClient dsrc_client_;
     std::shared_ptr<std::vector<uint8_t>> messagePtr;
     std::vector<uint8_t> message =
      {0, 243, 124, 29, 89, 212, 226, 212, 58, 179, 169, 197, 168, 
@@ -103,9 +108,12 @@ TEST(DSRCClientTest,testSendDsrcMessage)
     ASSERT_TRUE(dsrc_client_.sendDsrcMessage(messagePtr));
 }
 
-// Run all the tests
-int main(int argc, char **argv)
+
+int main(int argc, char ** argv)
 {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+    ::testing::InitGoogleTest(&argc, argv);
+
+    bool success = RUN_ALL_TESTS();
+
+    return success;
+} 
