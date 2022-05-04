@@ -4,61 +4,68 @@
     "psid" : "0020",
     "dsrc_id" : "20",
     "channel" : "172",
-    "priority" :  "6"
+    "priority" :  "0"
   },
   {
     "name" : "TIM",
     "psid" : "0083",
     "dsrc_id" : "31",
     "channel" : "CCH",
-    "priority" : "3"
+    "priority" : "0"
   },
   {
     "name" : "MAP",
     "psid" : "0082",
     "dsrc_id" : "18",
     "channel" : "172",
-    "priority" : "3"
+    "priority" : "0"
   },
   {
     "name" : "SPAT",
     "psid" : "0082",
     "dsrc_id" : "19",
     "channel" : "172",
-    "priority" : "3"
+    "priority" : "0"
   },
   {
     "name" : "MobilityRequest",
     "psid" : "BFEE",
     "dsrc_id" : "240",
     "channel" : "172",
-    "priority" : "6"
+    "priority" : "0"
   },
   {
     "name" : "MobilityResponse",
     "psid" : "BFEE",
     "dsrc_id" : "241",
     "channel" : "172",
-    "priority" : "6"
+    "priority" : "0"
   },
   {
     "name" : "MobilityOperation",
     "psid" : "BFEE",
     "dsrc_id" : "243",
     "channel" : "172",
-    "priority" : "6"
+    "priority" : "0"
   },
   {
     "name" : "MobilityPath",
     "psid" : "BFEE",
     "dsrc_id" : "242",
     "channel" : "172",
-    "priority" : "6"
+    "priority" : "0"
   },
   {
     "name" : "TrafficControlRequest",
     "psid" : "8003",
     "dsrc_id" : "244",
+    "channel" : "172",
+    "priority" : "0"
+  },
+  {
+    "name" : "PSM",
+    "psid" : "0082",
+    "dsrc_id" : "32",
     "channel" : "172",
     "priority" : "6"
   },
@@ -67,6 +74,6 @@
     "psid" : "8003",
     "dsrc_id" : "245",
     "channel" : "172",
-    "priority" : "6"
+    "priority" : "0"
   }
 ]
