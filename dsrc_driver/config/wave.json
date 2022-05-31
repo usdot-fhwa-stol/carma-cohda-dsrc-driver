@@ -63,6 +63,13 @@
     "priority" : "6"
   },
   {
+    "name" : "PSM",
+    "psid" : "0082",
+    "dsrc_id" : "32",
+    "channel" : "172",
+    "priority" : "6"
+  },
+  {
     "name" : "TrafficControlMessage",
     "psid" : "8003",
     "dsrc_id" : "245",
