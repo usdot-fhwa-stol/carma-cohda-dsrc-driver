@@ -12,7 +12,7 @@
 #  License for the specific language governing permissions and limitations under
 #  the License.
 
-FROM usdotfhwastoldev/carma-base:develop
+FROM usdotfhwastoldev/carma-base:develop as setup
 
 RUN mkdir ~/src
 COPY --chown=carma . /home/carma/src/
