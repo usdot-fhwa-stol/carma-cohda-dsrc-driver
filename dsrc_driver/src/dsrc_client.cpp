@@ -130,7 +130,16 @@ void DSRCOBUClient::close() {
 
 void DSRCOBUClient::process(const std::shared_ptr<const std::vector<uint8_t>>& data)
 {
+
     auto & entry = *data;
+
+    std::cerr << std::endl;
+    for (auto i : entry)
+    {
+        std::cerr << (int) i << " ";
+    }
+    std::cerr << std::endl;
+
     bool found_dsrc = false;
     // Valid message should begin with 2 bytes message ID and 1 byte length.
     for (size_t i = 0; i < entry.size() - 3; i++) { // leave 3 bytes after (for lsb of id, length byte 1, and either message body or length byte 2)
