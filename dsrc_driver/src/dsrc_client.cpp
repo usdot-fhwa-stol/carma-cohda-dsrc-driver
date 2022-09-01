@@ -131,8 +131,22 @@ void DSRCOBUClient::close() {
 void DSRCOBUClient::process(const std::shared_ptr<const std::vector<uint8_t>>& data)
 {
     auto & entry = *data;
+    bool found_dsrc = false;
     // Valid message should begin with 2 bytes message ID and 1 byte length.
     for (size_t i = 0; i < entry.size() - 3; i++) { // leave 3 bytes after (for lsb of id, length byte 1, and either message body or length byte 2)
+        
+        if (!found_dsrc && entry[i] == 0x03 && entry[i+1] == 0x80)
+        {
+            found_dsrc = true;
+            i = i + 4;
+            continue;
+        }
+
+        if (!found_dsrc)
+        {
+            continue;
+        }
+        
         // Generate the 16-bit message id from two bytes, skip if it isn't a valid one
         uint16_t msg_id = (static_cast<uint16_t>(entry[i]) << 8) | static_cast<uint16_t>(entry[i + 1]);
 
