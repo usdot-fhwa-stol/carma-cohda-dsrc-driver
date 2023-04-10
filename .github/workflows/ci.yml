@@ -1,0 +1,47 @@
+name: CI
+on:
+  push:
+  pull_request:
+jobs:
+  build:
+    defaults:
+      run:
+        shell: bash
+        working-directory: "/opt/carma/"
+    runs-on: ubuntu-latest
+    container:
+      image: usdotfhwastoldev/carma-base:develop
+      env:
+        INIT_ENV: "/home/carma/.base-image/init-env.sh"
+        ROS_2_ENV: "/opt/ros/foxy/setup.bash"
+        TERM: xterm
+      options: "--user root"
+    steps:
+    - name: Checkout ${{ github.event.repository.name }}
+      uses: actions/checkout@v3.3.0
+      with:
+        fetch-depth: 0
+        path: src/${{ github.event.repository.name }}
+    - name: Move source code
+      run: mv $GITHUB_WORKSPACE/src /opt/carma/
+    - name: Checkout dependencies
+      run: |
+        source "$INIT_ENV"
+        ./src/${{ github.event.repository.name }}/docker/checkout.bash -r /opt/carma/
+    - name: Build
+      run: |
+        source "$INIT_ENV"
+        source "$ROS_2_ENV"
+        sed -i '/colcon build/ s/$/ --packages-up-to dsrc_driver/' /home/carma/.ci-image/engineering_tools/code_coverage/make_with_coverage.bash
+        make_with_coverage.bash -m -e /opt/carma/ -o ./coverage_reports/gcov
+    - name: Run C++ Tests
+      run: |
+        source "$INIT_ENV"
+        source "$ROS_2_ENV"
+        sed -i '/colcon test/ s/$/ --packages-above dsrc_driver/' /home/carma/.ci-image/engineering_tools/code_coverage/make_with_coverage.bash
+        make_with_coverage.bash -t -e /opt/carma/ -o ./coverage_reports/gcov
+    - name: Run SonarScanner
+      uses: usdot-fhwa-stol/actions/sonar-scanner@main
+      with:
+        sonar-token: ${{ secrets.SONAR_TOKEN }}
+        working-dir: "/opt/carma/src/${{ github.event.repository.name }}"
