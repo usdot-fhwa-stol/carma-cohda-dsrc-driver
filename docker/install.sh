@@ -17,4 +17,4 @@
 source /opt/ros/humble/install/setup.bash
 
 cd ~/
-colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --packages-up-to dsrc_driver
+colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF --packages-up-to dsrc_driver
