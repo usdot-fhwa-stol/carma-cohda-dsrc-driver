@@ -10,7 +10,7 @@ jobs:
         working-directory: "/opt/carma/"
     runs-on: ubuntu-latest
     container:
-      image: usdotfhwastoldev/carma-base:develop
+      image: usdotfhwastol/carma-base:carma-system-4.5.0
       env:
         INIT_ENV: "/home/carma/.base-image/init-env.sh"
         ROS_2_ENV: "/opt/ros/foxy/setup.bash"
