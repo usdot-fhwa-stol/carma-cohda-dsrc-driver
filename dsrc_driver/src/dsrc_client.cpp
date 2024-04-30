@@ -173,7 +173,9 @@ void DSRCOBUClient::process(const std::shared_ptr<const std::vector<uint8_t>>& d
         }
         if (len == -1) { continue; }
         // If the length makes sense bsmPub(fits in the buffer), copy out the message bytes and pass to the Application class
-        if ((i + 1 + len + len_bytes) < entry.size()) {
+        // if ((i + 1 + len + len_bytes) < entry.size()) {
+        //Entry size - Length of bytes - message id bytes - Current place in message (i - 1)
+        if ((entry.size() - len_bytes - 2 - i - 1) == len) {
             // bool found_valid_msg = true;
             if (!IsValidMsgID(std::to_string(msg_id))) { continue; }
             size_t start_index = i;
@@ -195,9 +197,9 @@ bool DSRCOBUClient::IsValidMsgID(const std::string &msg_id)
             return false;
         }
         loadWaveConfigDsrcIds(this->wave_file_path);
-    }    
+    }
 
-    for (const auto &dsrc_id : this->wave_cfg_dsrc_ids_) 
+    for (const auto &dsrc_id : this->wave_cfg_dsrc_ids_)
     {
         if(msg_id == dsrc_id)
             return true;
@@ -211,7 +213,7 @@ void DSRCOBUClient::set_wave_file_path(const std::string& path)
 }
 
 void DSRCOBUClient::loadWaveConfigDsrcIds(const std::string &fileName)
-{    
+{
     const char* schema = "{\n"
                         " \"$schema\":\"http://json-schema.org/draft-06/schema\",\n"
                         " \"title\":\"Wave Config Schema\",\n"
