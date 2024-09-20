@@ -33,6 +33,7 @@
 */
 
 #include <iostream>
+#include <iomanip>
 #include <functional>
 #include <dirent.h>
 #include <rapidjson/document.h>
@@ -141,7 +142,7 @@ void DSRCOBUClient::close() {
 void DSRCOBUClient::process(const std::shared_ptr<const std::vector<uint8_t>>& data)
 {
     auto & entry = *data;
-    // Valid message should begin with 2 bytes message ID and 1 byte length.
+    // Valid message should begin with 2 bytes message ID and 1-2 byte length.
     for (size_t i = 0; i < entry.size() - 3; i++) { // leave 3 bytes after (for lsb of id, length byte 1, and either message body or length byte 2)
         // Generate the 16-bit message id from two bytes, skip if it isn't a valid one
         uint16_t msg_id = (static_cast<uint16_t>(entry[i]) << 8) | static_cast<uint16_t>(entry[i + 1]);
@@ -176,11 +177,34 @@ void DSRCOBUClient::process(const std::shared_ptr<const std::vector<uint8_t>>& d
         if ((i + 1 + len + len_bytes) < entry.size()) {
             // bool found_valid_msg = true;
             if (!IsValidMsgID(std::to_string(msg_id))) { continue; }
+            std::cerr << "Possible msg_id: " << std::to_string(msg_id) << std::endl;
+
             size_t start_index = i;
             size_t end_index = i + 2 + len + len_bytes; // includes 2 msgID bytes before message body
             //this constructor has range [first, last) hence the + 1
             std::vector<uint8_t> msg_vec(entry.begin() + start_index, entry.begin() + end_index);
-            onMessageReceived(msg_vec, msg_id);
+
+            // Create test vector starting 6 bytes in
+            std::vector<uint8_t> msg_vec_test(entry.begin() + start_index + 6, entry.begin() + end_index);
+            std::cerr << "Test vector: ";
+            for (const auto& byte : msg_vec_test) {
+                std::cerr << std::to_string(byte) << " ";
+            }
+            std::cerr << std::endl;
+
+            // extract first two bytes of msg_vec_test as msg_id_test
+            uint16_t msg_id_test = (msg_vec_test[0] << 8) | msg_vec_test[1];
+            std::cerr << "Test msg_id_test: " << std::to_string(msg_id_test) << std::endl;
+
+            if (!IsValidMsgID(std::to_string(msg_id_test))) {
+                onMessageReceived(msg_vec, msg_id);
+                std::cerr << "Sending original message vector." << std::endl;
+            }
+            else{
+                onMessageReceived(msg_vec_test, msg_id_test);
+                std::cerr << "Sending updated message vector." << std::endl;
+            }
+
             break;
         }
     }

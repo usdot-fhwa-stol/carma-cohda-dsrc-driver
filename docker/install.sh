@@ -24,7 +24,12 @@ fi
 
 cd ~/
 if [[ ! -z "$ROS2_PACKAGES" ]]; then
-    colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --packages-above $ROS2_PACKAGES
+    colcon build --parallel-workers $(nproc) \
+    --cmake-args \
+    -DCMAKE_BUILD_TYPE=Release \
+    --packages-above $ROS2_PACKAGES
 else
-    colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+    colcon build --parallel-workers $(nproc) \
+    --cmake-args \
+    -DCMAKE_BUILD_TYPE=Release
 fi

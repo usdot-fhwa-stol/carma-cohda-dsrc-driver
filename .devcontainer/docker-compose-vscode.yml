@@ -1,0 +1,78 @@
+#  Copyright (C) 2018-2023 LEIDOS.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+#  use this file except in compliance with the License. You may obtain a copy of
+#  the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations under
+#  the License.
+
+services:
+  roscore:
+    image: usdotfhwastol/carma-base:carma-system-4.5.0
+    network_mode: host
+    container_name: roscore
+    volumes_from:
+      - container:carma-config:ro
+    volumes:
+      - /opt/carma/.ros:/opt/carma/.ros
+    restart: always
+    command: roscore
+
+  ros1_bridge:
+    image: usdotfhwastol/carma-msgs:carma-system-4.5.0
+    network_mode: host
+    container_name: ros1_bridge
+    volumes_from:
+      - container:carma-config:ro
+    environment:
+      - ROS_MASTER_URI=http://localhost:11311
+    volumes:
+      - /opt/carma/logs:/opt/carma/logs
+      - /opt/carma/.ros:/home/carma/.ros
+    # Use the dynamic_bridge instead of the parameter bridge as the number of topics is small enough to pose less of a latency issue
+    command: bash -c 'wait-for-it.sh localhost:11311 -- rosparam load /opt/carma/vehicle/config/bridge.yml && source ~/.base-image/workspace/install/setup.bash && ros2 run ros1_bridge dynamic_bridge --multi-threads'
+
+  messenger:
+    image: usdotfhwastol/carma-messenger-core:carma-system-4.5.0
+    network_mode: host
+    container_name: carma-messenger-core
+    volumes_from:
+      - container:carma-config:ro
+    volumes:
+      - /opt/carma/logs:/opt/carma/logs
+      - /opt/carma/.ros:/opt/carma/.ros
+      - /opt/carma/vehicle:/opt/carma/vehicle
+    command: wait-for-it.sh localhost:11311 -- roslaunch /opt/carma/vehicle/config/carma-messenger-docker.launch
+
+  messenger_ros2:
+    image: usdotfhwastol/carma-messenger-core:carma-system-4.5.0
+    network_mode: host
+    container_name: messenger_ros2
+    volumes_from:
+      - container:carma-config:ro
+    volumes:
+      - /opt/carma/logs:/opt/carma/logs
+      - /opt/carma/.ros:/home/carma/.ros
+      - /opt/carma/routes:/opt/carma/routes
+      - /opt/carma/vehicle:/opt/carma/vehicle
+    command: bash -c 'source /opt/carma/install_ros2/setup.bash && ros2 launch /opt/carma/vehicle/config/carma-messenger-docker.launch.py'
+
+  cohda_dsrc_driver:
+    build: 
+      context: ..
+      dockerfile: .devcontainer/Dockerfile.builder
+    container_name: carma-cohda-dsrc-driver
+    network_mode: host
+    volumes_from:
+      - container:carma-config:ro
+    volumes:
+      - ..:/workspace:cached
+      - /opt/carma/logs:/opt/carma/logs
+      - /opt/carma/.ros:/home/carma/.ros
+    command: /bin/sh -c "while sleep 1000; do :; done"
