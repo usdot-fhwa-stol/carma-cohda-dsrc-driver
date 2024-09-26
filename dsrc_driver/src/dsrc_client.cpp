@@ -181,30 +181,79 @@ void DSRCOBUClient::process(const std::shared_ptr<const std::vector<uint8_t>>& d
 
             size_t start_index = i;
             size_t end_index = i + 2 + len + len_bytes; // includes 2 msgID bytes before message body
-            //this constructor has range [first, last) hence the + 1
+            // this constructor has range [first, last) hence the + 1
             std::vector<uint8_t> msg_vec(entry.begin() + start_index, entry.begin() + end_index);
 
-            // Create test vector starting 6 bytes in
-            std::vector<uint8_t> msg_vec_test(entry.begin() + start_index + 6, entry.begin() + end_index);
-            std::cerr << "Test vector: ";
-            for (const auto& byte : msg_vec_test) {
-                std::cerr << std::to_string(byte) << " ";
+            // Check if specified MessageFrame size matches actual data size
+            std::cerr << "msg_vec size: " << msg_vec.size() << std::endl;
+            if (msg_vec.size() > 255) {
+                start_index += long_frame;
+                std::vector<uint8_t> long_vec(entry.begin() + start_index, entry.begin() + end_index);
+                msg_size = (static_cast<uint16_t>(msg_vec[2]) << 8) | msg_vec[3];
+                std::cerr << "Frame size: " << std::to_string(msg_size) << std::endl;
+                if (msg_size == long_vec.size())
+                    {
+                        start_index += wsa_data;
+                    }
+                else {
+                    std::cerr << "Size in MessageFrame does not match actual data size!" << std::endl;
+                    continue;
+                }
             }
-            std::cerr << std::endl;
+            else {
+                start_index += short_frame;
+                std::vector<uint8_t> short_vec(entry.begin() + start_index, entry.begin() + end_index);
+                msg_size = msg_vec[2];
+                std::cerr << "Frame size: " << std::to_string(msg_size) << std::endl;
+                if (msg_size == short_vec.size())
+                    {
+                        start_index += wsa_data;
+                    }
+                else {
+                    std::cerr << "Size in MessageFrame does not match actual data size!" << std::endl;
+                    continue;
+                }
+            }
 
-            // extract first two bytes of msg_vec_test as msg_id_test
-            uint16_t msg_id_test = (msg_vec_test[0] << 8) | msg_vec_test[1];
-            std::cerr << "Test msg_id_test: " << std::to_string(msg_id_test) << std::endl;
-
+            std::vector<uint8_t> vec_test(entry.begin() + start_index, entry.begin() + end_index);
+            msg_id_test = (static_cast<uint16_t>(vec_test[0]) << 8) | vec_test[1];
+            std::cerr << "Msg ID test: " << std::to_string(msg_id_test) << std::endl;
+            
             if (!IsValidMsgID(std::to_string(msg_id_test))) {
                 onMessageReceived(msg_vec, msg_id);
                 std::cerr << "Sending original message vector." << std::endl;
             }
-            else{
-                onMessageReceived(msg_vec_test, msg_id_test);
-                std::cerr << "Sending updated message vector." << std::endl;
+            else {
+                std::cerr << "vec_test size: " << vec_test.size() << std::endl;
+                if (vec_test.size() > 255) {
+                    start_index += long_frame;
+                    std::vector<uint8_t> fin_test(entry.begin() + start_index, entry.begin() + end_index);
+                    msg_size = (vec_test[2] << 8) | vec_test[3];
+                    std::cerr << "Test Frame size: " << std::to_string(msg_size) << std::endl;
+                    if (msg_size == fin_test.size()) {
+                        onMessageReceived(vec_test, msg_id_test);
+                        std::cerr << "Sending updated message vector." << std::endl;
+                    }
+                    else {
+                        onMessageReceived(msg_vec, msg_id);
+                        std::cerr << "Sending original message vector." << std::endl;
+                    }
+                }
+                else {
+                    start_index += short_frame;
+                    std::vector<uint8_t> fin_test(entry.begin() + start_index, entry.begin() + end_index);
+                    msg_size = vec_test[2];
+                    std::cerr << "Frame size: " << std::to_string(msg_size) << std::endl;
+                    if (msg_size == fin_test.size()){
+                        onMessageReceived(vec_test, msg_id_test);
+                        std::cerr << "Sending updated message vector." << std::endl;
+                    }
+                    else {
+                        onMessageReceived(msg_vec, msg_id);
+                        std::cerr << "Sending original message vector." << std::endl;
+                    }
+                }
             }
-
             break;
         }
     }

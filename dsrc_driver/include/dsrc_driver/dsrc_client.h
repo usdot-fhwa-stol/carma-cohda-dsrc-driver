@@ -141,6 +141,12 @@ private:
     boost::asio::ip::udp::endpoint remote_udp_ep_;
     std::unique_ptr<cav::UDPListener> udp_listener_;
 
+    int long_frame = 4;
+    int short_frame = 3;
+    int wsa_data = 3;
+    uint16_t msg_size;
+    uint16_t msg_id_test;
+
     /**
     * @brief maintains the process thread
     *
