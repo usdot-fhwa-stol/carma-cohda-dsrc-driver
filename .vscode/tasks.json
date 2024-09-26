@@ -6,7 +6,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "~/src/docker/install.sh && cp -r /home/carma/install /opt/carma/install && sudo chmod -R +x /opt/carma/install",
+            "command": "cp --chown=carma . /home/carma/src/ && ~/src/docker/install.sh && cp -r /home/carma/install /opt/carma/install && sudo chmod -R +x /opt/carma/install",
             "group": {
                 "kind": "build",
                 "isDefault": true
