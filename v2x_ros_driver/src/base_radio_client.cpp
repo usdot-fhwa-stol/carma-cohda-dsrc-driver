@@ -161,8 +161,27 @@ void BaseRadioClient::process(const std::shared_ptr<const std::vector<uint8_t>> 
     // the original buffer and the logic below is unchanged, so un-wrapped
     // traffic is processed exactly as before.
     std::vector<uint8_t> stripped;
-    const std::vector<uint8_t> &entry =
-        stripIeee1609Dot2Header(*data, stripped) ? stripped : *data;
+    {
+        auto t0 = std::chrono::steady_clock::now();
+        bool did_strip = stripIeee1609Dot2Header(*data, stripped);
+        auto elapsed_ns = static_cast<uint64_t>(
+            std::chrono::duration_cast<std::chrono::nanoseconds>(
+                std::chrono::steady_clock::now() - t0).count());
+
+        ++strip_call_count_;
+        strip_total_ns_ += elapsed_ns;
+        if (elapsed_ns > strip_max_ns_) strip_max_ns_ = elapsed_ns;
+
+        static rclcpp::Clock throttle_clock{RCL_SYSTEM_TIME};
+        RCLCPP_DEBUG_STREAM_THROTTLE(
+            logger_, throttle_clock, 5000,
+            "stripIeee1609Dot2Header stats — calls: " << strip_call_count_
+            << "  avg: " << (strip_total_ns_ / strip_call_count_) << " ns"
+            << "  max: " << strip_max_ns_ << " ns");
+
+        if (!did_strip) stripped.clear();
+    }
+    const std::vector<uint8_t> &entry = stripped.empty() ? *data : stripped;
 
     for (size_t i = 0; i < entry.size() - 3; i++)
     {

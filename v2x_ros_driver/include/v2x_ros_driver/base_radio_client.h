@@ -18,6 +18,7 @@
 #include <boost/asio.hpp>
 #include <boost/signals2/signal.hpp>
 
+#include <chrono>
 #include <memory>
 #include <mutex>
 #include <thread>
@@ -150,6 +151,11 @@ protected:
     static const int long_frame_ = 4;
     /** @brief Frame overhead for payloads < 128 bytes (1-byte length + 2-byte DSRCmsgID) */
     static const int short_frame_ = 3;
+
+    // Latency accumulators for stripIeee1609Dot2Header — reported via DEBUG throttle
+    uint64_t strip_call_count_{0};
+    uint64_t strip_total_ns_{0};
+    uint64_t strip_max_ns_{0};
 };
 
 }
