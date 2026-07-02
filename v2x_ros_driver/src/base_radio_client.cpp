@@ -159,7 +159,7 @@ void BaseRadioClient::process(const std::shared_ptr<const std::vector<uint8_t>> 
     // frame -- and be discarded. If a security header is present, strip it down
     // to the inner MessageFrame first; if it is absent, 'entry' stays bound to
     // the original buffer and the logic below is unchanged, so un-wrapped
-    // traffic is processed exactly as before.
+    // traffic is processed exactly as if it had arrived without a security envelope.
     std::vector<uint8_t> stripped;
     {
         auto t0 = std::chrono::steady_clock::now();
