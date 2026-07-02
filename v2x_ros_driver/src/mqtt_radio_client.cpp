@@ -31,7 +31,7 @@ std::atomic<int> MqttRadioClient::lib_ref_count_{0};
 
 MqttRadioClient::MqttRadioClient()
 {
-    logger_ = rclcpp::get_logger("mqtt_radio_client");
+    logger_ = rclcpp::get_logger("v2x_ros_driver");
 
     // Thread-safe one-time library init
     if (lib_ref_count_.fetch_add(1) == 0)

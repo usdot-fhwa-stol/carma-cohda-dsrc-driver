@@ -4,20 +4,18 @@
 #   "udp"  — (default) existing UDP transport for Cohda/Commsignia/Kapsch OBUs
 #   "mqtt" — MQTT transport for Ettifos OBUs
 #
-v2x_ros_driver_node:
-  ros__parameters:
-    # ── Protocol selection ──
-    protocol: "udp"
+# ── Protocol selection ──
+protocol: "udp"
 
-    # ── UDP parameters (used when protocol = "udp") ──
-    v2x_radio_address: "192.168.88.40"
-    v2x_radio_listening_port: 1516
-    listening_port: 5398
+# ── UDP parameters (used when protocol = "udp") ──
+v2x_radio_address: "192.168.88.40"
+v2x_radio_listening_port: 1516
+listening_port: 5398
 
-    # ── MQTT parameters (used when protocol = "mqtt") ──
-    broker_address: "192.168.88.40"
-    broker_port: 1883
-    client_id: ""
-    qos_default: 0
-    reconnect_interval_sec: 5
-    mqtt_topic_prefix: "Ettifos/V2X"
+# ── MQTT parameters (used when protocol = "mqtt") ──
+broker_address: "192.168.88.40"
+broker_port: 1883
+client_id: ""
+qos_default: 0
+reconnect_interval_sec: 5
+mqtt_topic_prefix: "Ettifos/V2X"

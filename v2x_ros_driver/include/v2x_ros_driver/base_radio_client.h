@@ -141,7 +141,7 @@ protected:
      */
     bool stripIeee1609Dot2Header(const std::vector<uint8_t> &in, std::vector<uint8_t> &out);
 
-    rclcpp::Logger logger_{rclcpp::get_logger("base_radio_client")};
+    rclcpp::Logger logger_{rclcpp::get_logger("v2x_ros_driver")};
 
     std::vector<std::string> wave_cfg_dsrc_msg_ids_;
     std::vector<std::string> wave_cfg_psids_;

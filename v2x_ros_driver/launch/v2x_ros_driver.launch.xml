@@ -3,17 +3,13 @@
 
      <!--Declare the log_level launch argument-->
      <arg name="log_level" default="WARN"
-          description="The log level to use for the v2x_ros_driver_node" />
+          description="The log level to use for the v2x_ros_driver node" />
 
      <arg name="configuration_delay" default="2.0"
-          description="The delay in seconds before the v2x_ros_driver_node is configured" />
+          description="The delay in seconds before the v2x_ros_driver node is configured" />
 
      <arg name="enable_v2x_driver_lifecycle" default="False"
-          description="Enable the v2x_ros_driver_node lifecycle. If enabled manually transitions the node to active state. Default is false" />
-
-     <!--── New: protocol selection argument ──-->
-     <arg name="protocol" default="udp"
-          description="Communication protocol: 'udp' for Cohda/Commsignia/Kapsch, 'mqtt' for Ettifos OBU" />
+          description="Enable the v2x_ros_driver node lifecycle. If enabled manually transitions the node to active state. Default is false" />
 
      <!--Declare the global_params_override_file launch argument
      Parameters in this file will override any parameters loaded in their respective packages-->
@@ -27,7 +23,7 @@
 
           <!--Launch the core node(s)-->
           <composable_node pkg="v2x_ros_driver" plugin="V2XDriverApplication::Node"
-               name="v2x_ros_driver_node">
+               name="v2x_ros_driver">
 
                <extra_arg name="use_intra_process_comms" value="True" />
                <extra_arg name="--log-level" value="$(var log_level)" />
@@ -37,11 +33,6 @@
 
                <param from="$(find-pkg-share v2x_ros_driver)/config/params.yaml" />
                <param from="$(var global_params_override_file)" />
-               <!--Protocol can be overridden from the command line.
-               All other MQTT params (broker_address, broker_port, etc.)
-               should be set in params.yaml or GlobalParamsOverride.yaml
-               to avoid LaunchConfiguration string→int type mismatches.-->
-               <param name="protocol" value="$(var protocol)" />
           </composable_node>
      </node_container>
 
@@ -50,7 +41,7 @@
           <!--Set node lifecycle to configure after a delay
           Activate node after configuration-->
           <executable
-               cmd="sleep $(var configuration_delay) &amp;&amp; ros2 lifecycle set /v2x_ros_driver_node configure &amp;&amp; ros2 lifecycle set /v2x_ros_driver_node activate"
+               cmd="sleep $(var configuration_delay) &amp;&amp; ros2 lifecycle set /v2x_ros_driver configure &amp;&amp; ros2 lifecycle set /v2x_ros_driver activate"
                shell="true"
                output="screen" />
      </group>
