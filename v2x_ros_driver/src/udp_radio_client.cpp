@@ -44,7 +44,7 @@ namespace V2XDriverApplication
 UdpRadioClient::UdpRadioClient()
     : running_(false)
 {
-    logger_ = rclcpp::get_logger("udp_radio_client");
+    logger_ = rclcpp::get_logger("v2x_ros_driver");
 }
 
 UdpRadioClient::~UdpRadioClient()
