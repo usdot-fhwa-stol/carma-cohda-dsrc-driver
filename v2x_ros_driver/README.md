@@ -39,6 +39,20 @@ Parameters can be set in config/params.yaml.
 
 ---
 
+## IEEE 1609.2 Security Header Stripping
+
+Incoming messages may be wrapped in an IEEE 1609.2 security envelope (signed SPDU containing a certificate and signature). The driver scans each datagram for a recognisable envelope and, if found, strips it to expose the inner J2735 `MessageFrame` before further processing. **The cryptographic signature is not validated** — the envelope is removed purely to allow message-ID matching and size checks to proceed on the bare payload.
+
+### Latency measurement
+
+Because this scan runs on every inbound message, `BaseRadioClient` records per-call timing via `std::chrono::steady_clock`. A running summary (call count, average, and maximum duration in nanoseconds) is emitted at `DEBUG` log level, throttled to once every 5 seconds. There is no output at the default `WARN` level. To enable it:
+
+```sh
+ros2 launch v2x_ros_driver v2x_ros_driver.launch.py log_level:=DEBUG
+```
+
+---
+
 ## Deployment Instructions
 
 ### Deploy using docker (recommended)
