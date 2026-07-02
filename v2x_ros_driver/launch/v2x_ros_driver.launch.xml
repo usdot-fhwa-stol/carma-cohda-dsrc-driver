@@ -11,10 +11,6 @@
      <arg name="enable_v2x_driver_lifecycle" default="False"
           description="Enable the v2x_ros_driver_node lifecycle. If enabled manually transitions the node to active state. Default is false" />
 
-     <!--── New: protocol selection argument ──-->
-     <arg name="protocol" default="udp"
-          description="Communication protocol: 'udp' for Cohda/Commsignia/Kapsch, 'mqtt' for Ettifos OBU" />
-
      <!--Declare the global_params_override_file launch argument
      Parameters in this file will override any parameters loaded in their respective packages-->
      <arg name="global_params_override_file"
@@ -37,11 +33,6 @@
 
                <param from="$(find-pkg-share v2x_ros_driver)/config/params.yaml" />
                <param from="$(var global_params_override_file)" />
-               <!--Protocol can be overridden from the command line.
-               All other MQTT params (broker_address, broker_port, etc.)
-               should be set in params.yaml or GlobalParamsOverride.yaml
-               to avoid LaunchConfiguration string→int type mismatches.-->
-               <param name="protocol" value="$(var protocol)" />
           </composable_node>
      </node_container>
 
