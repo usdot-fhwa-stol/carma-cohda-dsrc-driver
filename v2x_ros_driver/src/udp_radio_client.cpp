@@ -64,6 +64,25 @@ bool UdpRadioClient::connect(const std::string &remote_address,
         remote_udp_ep_ = boost::asio::ip::udp::endpoint(
             boost::asio::ip::address::from_string(remote_address), remote_port);
     }
+    catch (const boost::system::system_error &e) {
+        RCLCPP_WARN_STREAM(logger_, "Was not able to read address " << remote_address << " as IPv4 address. Error : " << e.what() );
+        RCLCPP_WARN_STREAM(logger_, "Attempting DNS name resolution ... ");
+        try {
+             boost::asio::io_context io_context;
+
+            // 1. Create a resolver to handle DNS lookups
+            boost::asio::ip::udp::resolver resolver(io_context);
+            boost::asio::ip::udp::resolver::results_type endpoints = resolver.resolve(udp::v4(), remote_address, remote_port);
+            remote_udp_ep_ = *endpoint.begin();
+            RCLCPP_INFO_STREAM(logger_, "Successfully resolved " << remote_address << ":" << remote_port << " to " << remote_udp_ep.address());
+            
+        }
+        catch( const boost::system::system_error &er) {
+            RCLCPP_ERROR_STREAM(logger_, "DNS resolution failed for address " << remote_address << ":" << remote_port << er.what());
+            throw er;
+        }
+
+    }
     catch (std::exception e)
     {
         ec = boost::asio::error::invalid_argument;
