@@ -74,7 +74,7 @@ bool UdpRadioClient::connect(const std::string &remote_address,
             boost::asio::ip::udp::resolver resolver(io_context);
             boost::asio::ip::udp::resolver::results_type endpoints = resolver.resolve(udp::v4(), remote_address, remote_port);
             remote_udp_ep_ = *endpoint.begin();
-            RCLCPP_INFO_STREAM(logger_, "Successfully resolved " << remote_address << ":" << remote_port << " to " << remote_udp_ep.address());
+            RCLCPP_INFO_STREAM(logger_, "Successfully resolved " << remote_address << ":" << remote_port << " to " << remote_udp_ep_.address());
             
         }
         catch( const boost::system::system_error &er) {
