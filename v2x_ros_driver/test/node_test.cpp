@@ -64,6 +64,30 @@ TEST(V2XRadioClient,testConnection)
     ASSERT_FALSE(v2x_radio_client_.connected());
     result = v2x_radio_client_.connect("192.168.88.40", 1516, 5398);
     ASSERT_TRUE(result);
+    
+}
+
+TEST(V2XRadioClient,testConnectionDnsResolution)
+{
+    V2XDriverApplication::UdpRadioClient v2x_radio_client_;
+    boost::system::error_code ec;
+
+    EXPECT_FALSE(v2x_radio_client_.connected());
+    auto result = v2x_radio_client_.connect("localhost", 1516, 5398, ec);
+    EXPECT_TRUE(result);
+    EXPECT_EQ(0,ec.value());
+    EXPECT_EQ("Success",ec.message());
+    
+}
+
+TEST(V2XRadioClient,testConnectionDnsResolutionInvalid)
+{
+    V2XDriverApplication::UdpRadioClient v2x_radio_client_;
+    boost::system::error_code ec;
+
+    EXPECT_FALSE(v2x_radio_client_.connected());
+    EXPECT_THROW(v2x_radio_client_.connect("invalid", 1516, 5398, ec), boost::system::system_error);
+    
 }
 
 TEST(V2XRadioClient,testValidateMsgId)
