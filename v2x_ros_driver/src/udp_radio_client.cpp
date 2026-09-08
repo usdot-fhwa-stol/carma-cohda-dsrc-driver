@@ -72,7 +72,7 @@ bool UdpRadioClient::connect(const std::string &remote_address,
 
             // 1. Create a resolver to handle DNS lookups
             boost::asio::ip::udp::resolver resolver(io_context);
-            boost::asio::ip::udp::resolver::results_type endpoints = resolver.resolve(udp::v4(), remote_address, remote_port);
+            boost::asio::ip::udp::resolver::results_type endpoints = resolver.resolve(boost::asio::ip::udp::v4(), remote_address, remote_port);
             remote_udp_ep_ = *endpoint.begin();
             RCLCPP_INFO_STREAM(logger_, "Successfully resolved " << remote_address << ":" << remote_port << " to " << remote_udp_ep_.address());
             
