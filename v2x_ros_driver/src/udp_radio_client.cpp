@@ -79,7 +79,8 @@ bool UdpRadioClient::connect(const std::string &remote_address,
         }
         catch( const boost::system::system_error &er) {
             RCLCPP_ERROR_STREAM(logger_, "DNS resolution failed for address " << remote_address << ":" << remote_port << er.what());
-            throw er;
+            // Will rethrow the exception handled here.
+            throw;
         }
 
     }
