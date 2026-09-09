@@ -23,6 +23,8 @@ ARG ROS1_PACKAGES=""
 ENV ROS1_PACKAGES=${ROS1_PACKAGES}
 ARG ROS2_PACKAGES=""
 ENV ROS2_PACKAGES=${ROS2_PACKAGES}
+ARG PACKAGES_UP_TO="v2x_ros_driver driver_shutdown_ros2"
+ENV PACKAGES_UP_TO=${PACKAGES_UP_TO} 
 
 RUN mkdir ~/src
 COPY --chown=carma . /home/carma/src/
