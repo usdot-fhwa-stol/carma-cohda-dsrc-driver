@@ -29,8 +29,15 @@ if [[ ! -z "$ROS2_PACKAGES" ]]; then
     --parallel-workers $(nproc) \
     --cmake-args -DCMAKE_BUILD_TYPE=Release
 else
-    colcon build \
-    --packages-up-to v2x_ros_driver driver_shutdown_ros2 \
-    --parallel-workers $(nproc) \
-    --cmake-args -DCMAKE_BUILD_TYPE=Release
+    if [[ ! -z "$PACKAGES_UP_TO" ]]; then 
+        colcon build \
+        --packages-up-to "$PACKAGES_UP_TO" \
+        --parallel-workers $(nproc) \
+        --cmake-args -DCMAKE_BUILD_TYPE=Release
+    else
+        colcon build \
+        --packages-up-to v2x_ros_driver driver_shutdown_ros2 \
+        --parallel-workers $(nproc) \
+        --cmake-args -DCMAKE_BUILD_TYPE=Release
+    fi
 fi
